@@ -44,35 +44,36 @@ app.post('/upload', (req, res) => {
   req.pipe(fileStream);
 
   fileStream.on('finish', () => {
+    const protocol = req.protocol;
+    const host = req.get('host');
     const fileData = {
       name: fileName,
-      url: `http://localhost:${PORT}/uploads/${fileName}`,
+      url: `${protocol}://${host}/uploads/${fileName}`, // Dynamically generating the URL
     };
-  
+
     // Read existing data
     fs.readFile('db.json', (err, data) => {
       if (err) {
         console.error('Error reading db.json:', err);
         return res.status(500).json({ message: 'Error reading database' });
       }
-  
+
       const jsonData = JSON.parse(data);
-      jsonData.uploads = jsonData.uploads || []; // Change to 'uploads'
-      jsonData.uploads.push(fileData); // Change to 'uploads'
-  
+      jsonData.uploads = jsonData.uploads || [];
+      jsonData.uploads.push(fileData);
+
       // Write updated data back to db.json
       fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
         if (err) {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
         }
-  
+
         res.json({ message: 'File uploaded successfully', url: fileData.url });
       });
     });
   });
 
-  
   fileStream.on('error', (err) => {
     console.error('File stream error:', err);
     res.status(500).json({ message: 'Error uploading file' });
@@ -81,6 +82,8 @@ app.post('/upload', (req, res) => {
 
 // Use JSON Server as middleware
 app.use('/api', middlewares, router);
+
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
