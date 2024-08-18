@@ -179,6 +179,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import formidable from 'formidable';
+import cors from 'cors'
 import { fileURLToPath } from 'url';
 import jsonServer from 'json-server'
 // Helper to work with __dirname in ES6 modules
@@ -188,6 +189,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
+app.use(cors());
 
 // Create directories if they don't exist
 const createDirectoryIfNotExists = (dir) => {
