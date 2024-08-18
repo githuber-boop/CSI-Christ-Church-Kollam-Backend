@@ -188,6 +188,7 @@ app.post('/herald-upload', (req, res) => {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
         }
+        console.log(res.json)
 
         res.json({ message: 'File uploaded successfully', url: fileData.url });
       });
@@ -270,8 +271,8 @@ app.post('/almanac-upload', (req, res) => {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
         }
-
-        res.json({ message: 'File uploaded successfully', url: fileData.url });
+        console.log(res.json)
+        res.json({ message: 'File uploaded and replaced successfully', url: fileData.url });
       });
     });
   });
