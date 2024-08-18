@@ -177,74 +177,67 @@
 
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import jsonServer from 'json-server';
-import cors from 'cors';
+import fs from 'fs';
 import formidable from 'formidable';
-import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
 
+// Helper to work with __dirname in ES6 modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults();
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Create directories if they don't exist
+const createDirectoryIfNotExists = (dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
 
-// Serve static files from the "uploads" directory
+createDirectoryIfNotExists('uploads/almanac');
+createDirectoryIfNotExists('uploads/herald');
+
+// Handle file upload for Almanac
+app.post('/api/upload/almanac', (req, res) => {
+  const form = new formidable.IncomingForm();
+  form.uploadDir = path.join(__dirname, 'uploads/almanac');
+  form.keepExtensions = true;
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error uploading file' });
+    }
+    const file = files.file[0];
+    res.json({
+      filename: file.originalFilename,
+      path: `/uploads/almanac/${path.basename(file.filepath)}`,
+    });
+  });
+});
+
+// Handle file upload for Herald
+app.post('/api/upload/herald', (req, res) => {
+  const form = new formidable.IncomingForm();
+  form.uploadDir = path.join(__dirname, 'uploads/herald');
+  form.keepExtensions = true;
+
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error uploading file' });
+    }
+    const file = files.file[0];
+    res.json({
+      filename: file.originalFilename,
+      path: `/uploads/herald/${path.basename(file.filepath)}`,
+    });
+  });
+});
+
+// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Handle file upload using formidable
-app.post('/api/upload/:type', (req, res) => {
-  const form = formidable({
-    multiples: false, // For single file uploads
-    uploadDir: path.join(__dirname, 'uploads', req.params.type),
-    keepExtensions: true,
-  });
-
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error parsing the file upload' });
-    }
-
-    try {
-      const file = files.file;
-      const filePath = `/uploads/${req.params.type}/${path.basename(file.filepath)}`;
-
-      // Respond with the file details
-      res.json({
-        filename: file.originalFilename,
-        path: filePath,
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Error handling the uploaded file' });
-    }
-  });
-});
-
-app.get('/api/files/:type', async (req, res) => {
-  try {
-    const files = await fs.readdir(path.join(__dirname, 'uploads', req.params.type));
-    const fileDetails = files.map(file => ({
-      filename: file,
-      path: `/uploads/${req.params.type}/${file}`
-    }));
-
-    res.json(fileDetails);
-  } catch (error) {
-    res.status(500).json({ message: 'Error reading files' });
-  }
-});
-
-
-
-// Use JSON Server as middleware
-app.use('/api', middlewares, router);
-
-const PORT = process.env.PORT || 3000;
+// Start the server
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
