@@ -195,6 +195,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+const almanacDir = path.join(__dirname, 'uploads/almanac');
+const heraldDir = path.join(__dirname, 'uploads/herald');
+
 // Create directories if they don't exist
 const createDirectoryIfNotExists = (dir) => {
   if (!fs.existsSync(dir)) {
@@ -202,13 +206,25 @@ const createDirectoryIfNotExists = (dir) => {
   }
 };
 
-createDirectoryIfNotExists('uploads/almanac');
-createDirectoryIfNotExists('uploads/herald');
+const updateDbJson = (fileDetails, category) => {
+  const dbPath = path.join(__dirname, 'db.json');
+  let db = { almanac: [], herald: [] };
+
+  if (fs.existsSync(dbPath)) {
+    db = JSON.parse(fs.readFileSync(dbPath));
+  }
+
+  db[category].push(fileDetails);
+  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+};
+
+createDirectoryIfNotExists(almanacDir);
+createDirectoryIfNotExists(heraldDir);
 
 // Handle file upload for Almanac
 app.post('/api/upload/almanac', (req, res) => {
   const form = new Formidable({ 
-    uploadDir: path.join(__dirname, 'uploads/almanac'), 
+    uploadDir: almanacDir, 
     keepExtensions: true 
   });
 
@@ -218,17 +234,20 @@ app.post('/api/upload/almanac', (req, res) => {
     }
 
     const file = files.file[0];
-    res.json({
+    const fileDetails = {
       filename: file.originalFilename,
       path: `/uploads/almanac/${path.basename(file.filepath)}`
-    });
+    };
+    updateDbJson(fileDetails, 'almanac');
+    res.json(fileDetails);
+
   });
 });
 
 // Handle file upload for Herald
 app.post('/api/upload/herald', (req, res) => {
   const form = new Formidable({ 
-    uploadDir: path.join(__dirname, 'uploads/herald'), 
+    uploadDir: heraldDir, 
     keepExtensions: true 
   });
 
@@ -238,10 +257,12 @@ app.post('/api/upload/herald', (req, res) => {
     }
 
     const file = files.file[0];
-    res.json({
+    const fileDetails = {
       filename: file.originalFilename,
       path: `/uploads/herald/${path.basename(file.filepath)}`
-    });
+    };
+    updateDbJson(fileDetails, 'herald');
+    res.json(fileDetails);
   });
 });
 
