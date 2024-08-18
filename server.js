@@ -186,6 +186,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const router = jsonServer.router('db.json');
+const middlewares = jsonServer.defaults();
 
 // Create directories if they don't exist
 const createDirectoryIfNotExists = (dir) => {
@@ -237,6 +239,7 @@ app.post('/api/upload/herald', (req, res) => {
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Start the server
+app.use('/api', middlewares, router);
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
