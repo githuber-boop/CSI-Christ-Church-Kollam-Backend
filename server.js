@@ -181,6 +181,7 @@ app.post('/herald-upload', (req, res) => {
       } else {
         jsonData.heralds.push(fileData);
       }
+      console.log(JSON.stringify(jsonData));
 
       // Write updated data back to db.json
       fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
@@ -188,7 +189,7 @@ app.post('/herald-upload', (req, res) => {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
         }
-        console.log(res.json)
+        console.log(JSON.stringify(jsonData));
 
         res.json({ message: 'File uploaded successfully', url: fileData.url });
       });
@@ -264,6 +265,7 @@ app.post('/almanac-upload', (req, res) => {
       } else {
         jsonData.almanacs.push(fileData);
       }
+      console.log(JSON.stringify(jsonData));
 
       // Write updated data back to db.json
       fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
@@ -271,7 +273,7 @@ app.post('/almanac-upload', (req, res) => {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
         }
-        console.log(res.json)
+        console.log(JSON.stringify(jsonData));
         res.json({ message: 'File uploaded and replaced successfully', url: fileData.url });
       });
     });
