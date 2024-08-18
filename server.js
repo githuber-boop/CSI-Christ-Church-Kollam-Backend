@@ -178,18 +178,22 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import formidable from 'formidable';
-import cors from 'cors'
 import { fileURLToPath } from 'url';
-import jsonServer from 'json-server'
-// Helper to work with __dirname in ES6 modules
+import { Formidable } from 'formidable';
+import cors from 'cors';
+import jsonServer from 'json-server';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults();
+
+// Enable CORS
 app.use(cors());
+
+// Middleware to parse JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Create directories if they don't exist
 const createDirectoryIfNotExists = (dir) => {
@@ -203,36 +207,40 @@ createDirectoryIfNotExists('uploads/herald');
 
 // Handle file upload for Almanac
 app.post('/api/upload/almanac', (req, res) => {
-  const form = new formidable.IncomingForm();
-  form.uploadDir = path.join(__dirname, 'uploads/almanac');
-  form.keepExtensions = true;
+  const form = new Formidable({ 
+    uploadDir: path.join(__dirname, 'uploads/almanac'), 
+    keepExtensions: true 
+  });
 
   form.parse(req, (err, fields, files) => {
     if (err) {
       return res.status(500).json({ message: 'Error uploading file' });
     }
+
     const file = files.file[0];
     res.json({
       filename: file.originalFilename,
-      path: `/uploads/almanac/${path.basename(file.filepath)}`,
+      path: `/uploads/almanac/${path.basename(file.filepath)}`
     });
   });
 });
 
 // Handle file upload for Herald
 app.post('/api/upload/herald', (req, res) => {
-  const form = new formidable.IncomingForm();
-  form.uploadDir = path.join(__dirname, 'uploads/herald');
-  form.keepExtensions = true;
+  const form = new Formidable({ 
+    uploadDir: path.join(__dirname, 'uploads/herald'), 
+    keepExtensions: true 
+  });
 
   form.parse(req, (err, fields, files) => {
     if (err) {
       return res.status(500).json({ message: 'Error uploading file' });
     }
+
     const file = files.file[0];
     res.json({
       filename: file.originalFilename,
-      path: `/uploads/herald/${path.basename(file.filepath)}`,
+      path: `/uploads/herald/${path.basename(file.filepath)}`
     });
   });
 });
@@ -240,8 +248,14 @@ app.post('/api/upload/herald', (req, res) => {
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Start the server
+// Set up json-server
+const router = jsonServer.router('db.json');
+const middlewares = jsonServer.defaults();
+
+// Use json-server middleware
 app.use('/api', middlewares, router);
+
+// Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
