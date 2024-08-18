@@ -254,7 +254,30 @@ const middlewares = jsonServer.defaults();
 
 // Use json-server middleware
 app.use('/api', middlewares, router);
+app.get('/api/files/almanac', (req, res) => {
+  fs.readdir('uploads/almanac', (err, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error reading files' });
+    }
+    res.json(files.map(file => ({
+      filename: file,
+      path: `/uploads/almanac/${file}`
+    })));
+  });
+});
 
+// Endpoint to list Herald files
+app.get('/api/files/herald', (req, res) => {
+  fs.readdir('uploads/herald', (err, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error reading files' });
+    }
+    res.json(files.map(file => ({
+      filename: file,
+      path: `/uploads/herald/${file}`
+    })));
+  });
+});
 // Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
