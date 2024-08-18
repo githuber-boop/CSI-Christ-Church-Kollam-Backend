@@ -8,8 +8,20 @@
     }
   ],
   "events": [],
-  "herald": [],
-  "almanac": [],
+  "heralds": [
+    {
+      "name": "ChurchHeraldJune2024.pdf",
+      "url": "http://localhost:5000/heralds/ChurchHeraldJune2024.pdf",
+      "id": "1"
+    }
+  ],
+  "almanacs": [
+    {
+      "name": "almanac-2024-1.pdf",
+      "url": "http://localhost:5000/almanacs/almanac-2024-1.pdf",
+      "id": "1"
+    }
+  ],
   "users": [
     {
       "id": "45fa",
@@ -46,16 +58,6 @@
       "role": "member",
       "password": "kollamchurch",
       "id": "Fsad8Eo"
-    }
-  ],
-  "uploads": [
-    {
-      "name": "ChurchHeraldJune2024.pdf",
-      "url": "http://localhost:5000/uploads/ChurchHeraldJune2024.pdf"
-    },
-    {
-      "name": "almanac-2024-1.pdf",
-      "url": "http://localhost:5000/uploads/almanac-2024-1.pdf"
     }
   ]
 }

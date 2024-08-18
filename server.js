@@ -88,219 +88,198 @@
 //   console.log(`Server is running on port ${PORT}`);
 // });
 
-// import express from 'express';
-// import path from 'path';
-// import fs from 'fs';
-// import jsonServer from 'json-server';
-// import cors from 'cors';
-// import { fileURLToPath } from 'url';
-
-// // Get the current file's directory
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// const app = express();
-// const PORT = 5000;
-// const router = jsonServer.router('db.json');
-// const middlewares = jsonServer.defaults();
-
-// // Middleware to enable CORS
-// app.use(cors());
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// // Serve static files from the uploads directory
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// // Endpoint to handle file uploads
-// app.post('/upload', (req, res) => {
-//   const fileName = req.headers['file-name'];
-//   console.log('Received file name:', fileName); // Debugging log
-
-//   if (!fileName) {
-//     return res.status(400).json({ message: 'File name is required' });
-//   }
-
-//   const uploadsDir = path.join(__dirname, 'uploads');
-
-//   // Ensure the uploads directory exists
-//   if (!fs.existsSync(uploadsDir)) {
-//     fs.mkdirSync(uploadsDir, { recursive: true });
-//   }
-
-//   const filePath = path.join(uploadsDir, fileName);
-//   const fileStream = fs.createWriteStream(filePath);
-
-//   req.pipe(fileStream);
-
-//   fileStream.on('finish', () => {
-//     const fileData = {
-//       name: fileName,
-//       url: `https://church-kollam-backend.onrender.com/uploads/${fileName}`,
-//     };
-  
-//     // Read existing data
-//     fs.readFile('db.json', (err, data) => {
-//       if (err) {
-//         console.error('Error reading db.json:', err);
-//         return res.status(500).json({ message: 'Error reading database' });
-//       }
-  
-//       const jsonData = JSON.parse(data);
-//       jsonData.uploads = jsonData.uploads || []; // Change to 'uploads'
-//       jsonData.uploads.push(fileData); // Change to 'uploads'
-  
-//       // Write updated data back to db.json
-//       fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
-//         if (err) {
-//           console.error('Error writing to db.json:', err);
-//           return res.status(500).json({ message: 'Error saving to database' });
-//         }
-  
-//         res.json({ message: 'File uploaded successfully', url: fileData.url });
-//       });
-//     });
-//   });
-
-  
-//   fileStream.on('error', (err) => {
-//     console.error('File stream error:', err);
-//     res.status(500).json({ message: 'Error uploading file' });
-//   });
-// });
-
-// // Use JSON Server as middleware
-// app.use('/api', middlewares, router);
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { Formidable } from 'formidable';
-import cors from 'cors';
 import jsonServer from 'json-server';
+import cors from 'cors';
+import { fileURLToPath } from 'url';
 
+// Get the current file's directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-
-// Enable CORS
-app.use(cors());
-
-// Middleware to parse JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-
-const almanacDir = path.join(__dirname, 'uploads/almanac');
-const heraldDir = path.join(__dirname, 'uploads/herald');
-
-// Create directories if they don't exist
-const createDirectoryIfNotExists = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-};
-
-const updateDbJson = (fileDetails, category) => {
-  const dbPath = path.join(__dirname, 'db.json');
-  let db = { almanac: [], herald: [] };
-
-  if (fs.existsSync(dbPath)) {
-    db = JSON.parse(fs.readFileSync(dbPath));
-  }
-
-  db[category].push(fileDetails);
-  fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
-};
-
-createDirectoryIfNotExists(almanacDir);
-createDirectoryIfNotExists(heraldDir);
-
-// Handle file upload for Almanac
-app.post('/api/upload/almanac', (req, res) => {
-  const form = new Formidable({ 
-    uploadDir: almanacDir, 
-    keepExtensions: true 
-  });
-
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error uploading file' });
-    }
-
-    const file = files.file[0];
-    const fileDetails = {
-      filename: file.originalFilename,
-      path: `/uploads/almanac/${path.basename(file.filepath)}`
-    };
-    updateDbJson(fileDetails, 'almanac');
-    res.json(fileDetails);
-
-  });
-});
-
-// Handle file upload for Herald
-app.post('/api/upload/herald', (req, res) => {
-  const form = new Formidable({ 
-    uploadDir: heraldDir, 
-    keepExtensions: true 
-  });
-
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error uploading file' });
-    }
-
-    const file = files.file[0];
-    const fileDetails = {
-      filename: file.originalFilename,
-      path: `/uploads/herald/${path.basename(file.filepath)}`
-    };
-    updateDbJson(fileDetails, 'herald');
-    res.json(fileDetails);
-  });
-});
-
-// Serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Set up json-server
+const PORT = 5000;
 const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
 
-// Use json-server middleware
-app.use('/api', middlewares, router);
-app.get('/api/files/almanac', (req, res) => {
-  fs.readdir('uploads/almanac', (err, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error reading files' });
-    }
-    res.json(files.map(file => ({
-      filename: file,
-      path: `/uploads/almanac/${file}`
-    })));
+// Middleware to enable CORS
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the uploads directory
+app.use('/heralds', express.static(path.join(__dirname, 'heralds')));
+app.use('/almanacs', express.static(path.join(__dirname, 'almanacs')));
+
+app.post('/herald-upload', (req, res) => {
+  const fileId = req.headers['file-id'];
+  const fileName = req.headers['file-name'];
+  console.log('Received file ID:', fileId); // Debugging log
+  console.log('Received file name:', fileName); // Debugging log
+
+  if (!fileId || !fileName) {
+    return res.status(400).json({ message: 'File ID and name are required' });
+  }
+
+  const uploadsDir = path.join(__dirname, 'heralds');
+
+  const deleteAllFilesInDir = (dir) => {
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        console.error('Error reading directory:', err);
+        return;
+      }
+      files.forEach(file => {
+        const filePath = path.join(dir, file);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Error deleting file ${filePath}:`, err);
+          }
+        });
+      });
+    });
+  };
+
+  // Ensure the uploads directory exists
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  const filePath = path.join(uploadsDir, fileName);
+
+
+  // Check if the file already exists and delete it
+  deleteAllFilesInDir(uploadsDir)
+
+  const fileStream = fs.createWriteStream(filePath);
+
+  req.pipe(fileStream);
+
+  fileStream.on('finish', () => {
+    const fileData = {
+      name: fileName,
+      url: `http://localhost:5000/heralds/${fileName}`,
+      id: fileId // Use the provided file ID
+    };
+
+    // Read existing data
+    fs.readFile('db.json', (err, data) => {
+      if (err) {
+        console.error('Error reading db.json:', err);
+        return res.status(500).json({ message: 'Error reading database' });
+      }
+
+      const jsonData = JSON.parse(data);
+      jsonData.heralds = jsonData.heralds || [];
+
+      // Find and replace the file entry based on ID
+      const index = jsonData.heralds.findIndex(file => file.id === fileId);
+      if (index > -1) {
+        jsonData.heralds[index] = fileData;
+      } else {
+        jsonData.heralds.push(fileData);
+      }
+
+      // Write updated data back to db.json
+      fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
+        if (err) {
+          console.error('Error writing to db.json:', err);
+          return res.status(500).json({ message: 'Error saving to database' });
+        }
+
+        res.json({ message: 'File uploaded successfully', url: fileData.url });
+      });
+    });
   });
 });
 
-// Endpoint to list Herald files
-app.get('/api/files/herald', (req, res) => {
-  fs.readdir('uploads/herald', (err, files) => {
-    if (err) {
-      return res.status(500).json({ message: 'Error reading files' });
-    }
-    res.json(files.map(file => ({
-      filename: file,
-      path: `/uploads/herald/${file}`
-    })));
+app.post('/almanac-upload', (req, res) => {
+  const fileId = req.headers['file-id'];
+  const fileName = req.headers['file-name'];
+  console.log('Received file ID:', fileId); // Debugging log
+  console.log('Received file name:', fileName); // Debugging log
+
+  if (!fileId || !fileName) {
+    return res.status(400).json({ message: 'File ID and name are required' });
+  }
+
+  const uploadsDir = path.join(__dirname, 'almanacs');
+
+  const deleteAllFilesInDir = (dir) => {
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        console.error('Error reading directory:', err);
+        return;
+      }
+      files.forEach(file => {
+        const filePath = path.join(dir, file);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Error deleting file ${filePath}:`, err);
+          }
+        });
+      });
+    });
+  };
+
+  // Ensure the uploads directory exists
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  const filePath = path.join(uploadsDir, fileName);
+
+
+  // Check if the file already exists and delete it
+  deleteAllFilesInDir(uploadsDir)
+
+  const fileStream = fs.createWriteStream(filePath);
+
+  req.pipe(fileStream);
+
+  fileStream.on('finish', () => {
+    const fileData = {
+      name: fileName,
+      url: `http://localhost:5000/almanacs/${fileName}`,
+      id: fileId // Use the provided file ID
+    };
+
+    // Read existing data
+    fs.readFile('db.json', (err, data) => {
+      if (err) {
+        console.error('Error reading db.json:', err);
+        return res.status(500).json({ message: 'Error reading database' });
+      }
+
+      const jsonData = JSON.parse(data);
+      jsonData.almanacs = jsonData.almanacs || [];
+
+      // Find and replace the file entry based on ID
+      const index = jsonData.almanacs.findIndex(file => file.id === fileId);
+      if (index > -1) {
+        jsonData.almanacs[index] = fileData;
+      } else {
+        jsonData.almanacs.push(fileData);
+      }
+
+      // Write updated data back to db.json
+      fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
+        if (err) {
+          console.error('Error writing to db.json:', err);
+          return res.status(500).json({ message: 'Error saving to database' });
+        }
+
+        res.json({ message: 'File uploaded successfully', url: fileData.url });
+      });
+    });
   });
 });
-// Start the server
-const PORT = process.env.PORT || 8000;
+
+// Use JSON Server as middleware
+app.use('/api', middlewares, router);
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
+
