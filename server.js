@@ -160,7 +160,7 @@ app.post('/herald-upload', (req, res) => {
   fileStream.on('finish', () => {
     const fileData = {
       name: fileName,
-      url: `http://localhost:5000/heralds/${fileName}`,
+      url: `https://church-kollam-backend.onrender.com/heralds/${fileName}`,
       id: fileId // Use the provided file ID
     };
 
@@ -242,7 +242,7 @@ app.post('/almanac-upload', (req, res) => {
   fileStream.on('finish', () => {
     const fileData = {
       name: fileName,
-      url: `http://localhost:5000/almanacs/${fileName}`,
+      url: `https://church-kollam-backend.onrender.com/almanacs/${fileName}`,
       id: fileId // Use the provided file ID
     };
 
