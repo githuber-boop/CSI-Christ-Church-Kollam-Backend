@@ -9,18 +9,10 @@
   ],
   "events": [],
   "heralds": [
-    {
-      "name": "ChurchHeraldJune2024.pdf",
-      "url": "http://localhost:5000/heralds/ChurchHeraldJune2024.pdf",
-      "id": "1"
-    }
+
   ],
   "almanacs": [
-    {
-      "name": "almanac-2024-1.pdf",
-      "url": "http://localhost:5000/almanacs/almanac-2024-1.pdf",
-      "id": "1"
-    }
+
   ],
   "users": [
     {
