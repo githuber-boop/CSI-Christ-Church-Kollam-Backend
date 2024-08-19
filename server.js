@@ -261,18 +261,15 @@ app.post('/almanac-upload', (req, res) => {
 
       const jsonData = JSON.parse(data);
       jsonData.almanacs = jsonData.almanacs || [];
-      console.log(` Before changing ${jsonData}`)
+      console.log(` Before changing ${JSON.stringify(jsonData)}`)
 
-      // Find and replace the file entry based on ID
-      const index = jsonData.almanacs.findIndex(file => file.id === fileId);
-      if (index > -1) {
-        jsonData.almanacs[index] = fileData;
-      } else {
-        jsonData.almanacs.push(fileData);
-      }
+
+      jsonData.almanacs.push(fileData);
+
 
       console.log(` Data of db.json ${data}`)
-      console.log(` After changing ${jsonData}`)
+      console.log(` After changing ${JSON.stringify(jsonData)}`)
+
 
 
       // Write updated data back to db.json
@@ -284,6 +281,10 @@ app.post('/almanac-upload', (req, res) => {
         console.log(JSON.stringify(jsonData.almanacs));
         res.json({ message: 'File uploaded and replaced successfully', url: fileData.url });
       });
+
+      console.log(` Data of db.json ${data}`)
+      console.log(` After changing ${JSON.stringify(jsonData)}`)
+
     });
   });
 });
