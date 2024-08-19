@@ -9,10 +9,18 @@
   ],
   "events": [],
   "heralds": [
-
+    {
+      "name": "ChurchHeraldJune2024.pdf",
+      "url": "https://church-kollam-backend.onrender.com/heralds/ChurchHeraldJune2024.pdf",
+      "id": "1"
+    }
   ],
   "almanacs": [
-    
+    {
+      "name": "almanac-2024-1.pdf",
+      "url": "https://church-kollam-backend.onrender.com/almanacs/almanac-2024-1.pdf",
+      "id": "1"
+    }
   ],
   "users": [
     {
