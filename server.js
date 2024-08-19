@@ -88,7 +88,7 @@
 //   console.log(`Server is running on port ${PORT}`);
 // });
 
-import express from 'express';
+import express, { json } from 'express';
 import path from 'path';
 import fs from 'fs';
 import jsonServer from 'json-server';
@@ -171,6 +171,8 @@ app.post('/herald-upload', (req, res) => {
         return res.status(500).json({ message: 'Error reading database' });
       }
 
+
+
       const jsonData = JSON.parse(data);
       jsonData.heralds = jsonData.heralds || [];
 
@@ -181,10 +183,12 @@ app.post('/herald-upload', (req, res) => {
       } else {
         jsonData.heralds.push(fileData);
       }
+      
+      console.log(data)
       console.log(JSON.stringify(jsonData));
 
       // Write updated data back to db.json
-      fs.writeFile('db.json', JSON.stringify(jsonData.heralds, null, 2), (err) => {
+      fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
         if (err) {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
@@ -257,6 +261,7 @@ app.post('/almanac-upload', (req, res) => {
 
       const jsonData = JSON.parse(data);
       jsonData.almanacs = jsonData.almanacs || [];
+      console.log(` Before changing ${jsonData}`)
 
       // Find and replace the file entry based on ID
       const index = jsonData.almanacs.findIndex(file => file.id === fileId);
@@ -265,10 +270,13 @@ app.post('/almanac-upload', (req, res) => {
       } else {
         jsonData.almanacs.push(fileData);
       }
-      console.log(JSON.stringify(jsonData));
+
+      console.log(` Data of db.json ${data}`)
+      console.log(` After changing ${jsonData}`)
+
 
       // Write updated data back to db.json
-      fs.writeFile('db.json', JSON.stringify(jsonData.almanacs, null, 2), (err) => {
+      fs.writeFile('db.json', JSON.stringify(jsonData, null, 2), (err) => {
         if (err) {
           console.error('Error writing to db.json:', err);
           return res.status(500).json({ message: 'Error saving to database' });
