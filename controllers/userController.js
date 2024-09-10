@@ -55,6 +55,7 @@ const addUser = async (req,res)=>{
           weddingDte: req.body.weddingDte,
           baptism: req.body.baptism,
           confirmation: req.body.confirmation,
+          familyMembers: req.body.familyMembers,
           role : "member",
           password : "kollamchurch",
           createdAt:new Date()
@@ -67,6 +68,38 @@ const addUser = async (req,res)=>{
         
 }
 
+const getUserWithFamily = async (req,res) => {
+  try {
+      
+    const user = await User.findById(req.params.id).lean();
+    if (!user) {
+      return res.status(404).json({ error: 'Users not found' });
+    }
+    console.log(user)
+     res.status(200).json(user)
+  } catch (error) {
+    console.error(error);
+  res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+const login = async (req,res) => {
+  const { number } = req.body;
+
+    try {
+        const user = await User.findOne({ number }).lean();
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // In a real application, you should verify the password too
+        res.status(200).json({ message: 'Login successful', user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+}
 
 
-export {getUsers,addUser, getUserById, updateUserbyID, deleteUser}
+
+export {getUsers,addUser, getUserById, updateUserbyID, deleteUser, getUserWithFamily, login}

@@ -3,7 +3,7 @@ import Event from "../models/eventsModel.js";
 const getEvent = async (req, res) => {
     try {
       
-      const event= await Event.find({});
+      const event= await Event.find({}).sort({ createdAt: -1 });
       if (!event) {
         return res.status(404).json({ error: 'Users not found' });
       }
@@ -30,4 +30,13 @@ const addEvent = async (req,res)=>{
     
 }
 
-export {getEvent ,addEvent }
+const deleteEvent = async (req,res)=>{
+  try {
+    await Event.findByIdAndDelete(req.params.id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting user', error });
+  }
+ }
+
+export {getEvent ,addEvent, deleteEvent }

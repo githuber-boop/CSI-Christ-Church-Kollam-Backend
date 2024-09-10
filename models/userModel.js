@@ -1,5 +1,14 @@
 import mongoose from 'mongoose'
 
+const familyMemberSchema = new mongoose.Schema({
+  name: String,
+  baptism: {
+    type: String,
+  },
+  dob:String,
+  confirmation: String,
+});
+
 const userSchema = new mongoose.Schema({
     name: String,
     address:String,
@@ -7,16 +16,17 @@ const userSchema = new mongoose.Schema({
     dob:String,
     email: {
         type: String,
-        unique: true,
-        minLength: 3,
-        maxLength: 30,
-      },
+    },
     weddingDte: String,
-    baptism: String,
+    baptism: {
+      type: String,
+    },
+
     confirmation: String,
     role:  String,
     password: String,
-    createdAt: Date
+    createdAt: Date,
+    familyMembers: [familyMemberSchema]
 });
 
 const User = mongoose.model('users', userSchema);
