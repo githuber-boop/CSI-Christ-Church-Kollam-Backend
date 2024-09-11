@@ -15,11 +15,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 dotenv.config();
-
+const corsOptions = {
+  origin: 'https://church-kollam.onrender.com', // Your frontend URL
+  methods: 'GET, POST, PUT, DELETE, PATCH',
+};
 const app = express();
 
 app.use(express.json());
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true })); 
 app.use('/api/users',userRouter)
 app.use('/api/message',messageRouter)
