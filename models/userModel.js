@@ -2,9 +2,7 @@ import mongoose from 'mongoose'
 
 const familyMemberSchema = new mongoose.Schema({
   name: String,
-  baptism: {
-    type: String,
-  },
+  baptism:String,
   dob:String,
   confirmation: String,
 });
@@ -14,14 +12,9 @@ const userSchema = new mongoose.Schema({
     address:String,
     number:Number,
     dob:String,
-    email: {
-        type: String,
-    },
+    email: String,
     weddingDte: String,
-    baptism: {
-      type: String,
-    },
-
+    baptism: String,
     confirmation: String,
     role:  String,
     password: String,
