@@ -46,25 +46,16 @@ const deleteUser = async (req,res)=>{
  }
 
 const addUser = async (req,res)=>{
-        var userItem = {
-          name : req.body.name,
-          address:req.body.address,
-          number: req.body.number,
-          email: req.body.email,
-          dob:req.body.dob,
-          weddingDte: req.body.weddingDte,
-          baptism: req.body.baptism,
-          confirmation: req.body.confirmation,
-          familyMembers: req.body.familyMembers,
-          role : "member",
-          password : "kollamchurch",
-          createdAt:new Date()
-        }
 
-        console.log(userItem)
-        var user = new User(userItem)
-        await user.save()
-        res.status(200).json(user)
+    try {
+      var user = new User(req.body)
+      await user.save()
+      res.status(200).json(user)
+    } catch (error) {
+      console.error(error)
+    }
+
+        
         
 }
 
@@ -79,7 +70,7 @@ const getUserWithFamily = async (req,res) => {
      res.status(200).json(user)
   } catch (error) {
     console.error(error);
-  res.status(500).json({ error: 'Internal Server Error' });
+  res.status(500).json({ error: 'Internal Server Error For Finding Member' });
   }
 }
 
