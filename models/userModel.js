@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
     weddingDte: String,
     baptism: String,
     confirmation: String,
+    house: String,
     role:  String,
     password: String,
     createdAt: Date,
