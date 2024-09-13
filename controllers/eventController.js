@@ -1,5 +1,6 @@
 import Event from "../models/eventsModel.js";
 
+
 const getEvent = async (req, res) => {
     try {
       
@@ -14,12 +15,13 @@ const getEvent = async (req, res) => {
     }
 }
 
-const addEvent = async (req,res)=>{
+const addEvent =  async (req,res)=>{
     var eventItem = {
       eventName : req.body.eventName,
       date:req.body.date,
       time: req.body.time,
       eventDetails: req.body.eventDetails,
+      imageUrl:req.body.imageUrl,
       createdAt:new Date()
     }
 

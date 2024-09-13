@@ -29,13 +29,16 @@ app.use('/api/message',messageRouter)
 app.use('/api/events',eventsRouter)
 connectDb();
 
-// Set up multer storage configuration
 
+
+// Set up multer storage configuration
 
 
 app.get("/", (req, res) => {
   res.send("API is working");
 });
+
+
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
