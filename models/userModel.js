@@ -10,7 +10,7 @@ const familyMemberSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     name: String,
     address:String,
-    number:Number,
+    number:String,
     dob:String,
     email: String,
     weddingDte: String,
