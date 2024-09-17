@@ -16,19 +16,18 @@ const __dirname = dirname(__filename);
 
 dotenv.config();
 const corsOptions = {
-  origin: 'https://church-kollam.onrender.com', // Your frontend URL
+  origin: 'https://church-kollam.onrender.com', 
   methods: 'GET, POST, PUT, DELETE, PATCH',
 };
 const app = express();
 
 app.use(express.json());
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.urlencoded({ extended: true })); 
 app.use('/api/users',userRouter)
 app.use('/api/message',messageRouter)
 app.use('/api/events',eventsRouter)
 connectDb();
-
 
 
 // Set up multer storage configuration
