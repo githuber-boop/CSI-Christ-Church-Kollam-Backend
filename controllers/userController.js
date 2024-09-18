@@ -6,7 +6,7 @@ const SECRET_KEY = 'ccf32e803eaedd50c8efba7acc099fcfe2262b8334874aaf5af3be43059d
 const getUsers = async (req, res) => {
     try {
       
-      const users= await User.find({});
+      const users= await User.find({role: "member"});
       if (!users) {
         return res.status(404).json({ error: 'Users not found' });
       }
