@@ -1,7 +1,9 @@
 import User from "../models/userModel.js";
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv'
 
-const SECRET_KEY = 'ccf32e803eaedd50c8efba7acc099fcfe2262b8334874aaf5af3be43059dc389';
+dotenv.config()
+
 
 const getUsers = async (req, res) => {
     try {
@@ -99,7 +101,7 @@ const login = async (req,res) => {
 
         if (user) {
           // Generate a JWT token
-          const token = jwt.sign({ id: user._id, role: user.role }, SECRET_KEY, { expiresIn: '24h' });
+          const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET_KEY, { expiresIn: '24h' });
           return res.json({ token });
       } else {
           return res.status(404).json({ message: 'User not found' });
@@ -118,7 +120,7 @@ const verifyToken = (req, res, next) => {
     if (!token) return res.status(401).json({ message: 'Access denied. No token provided.' });
 
     // Verify the token
-    jwt.verify(token, SECRET_KEY, (err, decodedToken) => {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
         if (err) return res.status(403).json({ message: 'Invalid token.' });
 
         // Extract userId and store it in the request object

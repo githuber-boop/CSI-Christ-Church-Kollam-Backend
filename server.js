@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 
 dotenv.config();
 const corsOptions = {
-  origin: 'https://church-kollam.onrender.com', 
+  // origin: 'https://church-kollam.onrender.com', 
   methods: 'GET, POST, PUT, DELETE, PATCH',
 };
 const app = express();
@@ -104,6 +104,13 @@ app.get('/download/:folder', (req, res) => {
   } else {
     res.status(404).json({ error: 'File not found' });
   }
+});
+
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Handles any requests that don't match the API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(process.env.PORT, () => {
