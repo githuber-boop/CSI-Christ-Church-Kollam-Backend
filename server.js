@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 
 dotenv.config();
 const corsOptions = {
-  // origin: 'https://church-kollam.onrender.com', 
+  origin: 'https://csi-christ-church-kollam.pages.dev/', 
   methods: 'GET, POST, PUT, DELETE, PATCH',
 };
 const app = express();
