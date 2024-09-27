@@ -15,8 +15,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 dotenv.config();
+
+const allowedOrigins = ['https://www.csicathedralkollam.com', 'https://csicathedralkollam.com'];
+
 const corsOptions = {
-  origin: 'https://csi-christ-church-kollam.pages.dev', 
+  origin: (origin, callback) => {
+    // Check if the incoming origin is in the allowedOrigins array
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: 'GET, POST, PUT, DELETE, PATCH',
 };
 const app = express();
