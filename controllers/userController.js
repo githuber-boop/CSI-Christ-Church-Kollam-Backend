@@ -89,7 +89,7 @@ const login = async (req,res) => {
 
     try {
       const user = await User.findOne({ number: normalizedPhoneNumber });
-      if (user.role === 'admin' && password !== 'admin') {
+      if (user.role === 'admin' && password !== 'churchadmin') {
         return res.status(401).json({ message: 'Invalid admin password' });
     }
 
